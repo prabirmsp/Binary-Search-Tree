@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+
+typedef struct node {
+  int key;
+  int value;
+  node* left;
+  node* right;
+} node;
+
+typedef node ** bst;
+
+// inserts the pair (key, value) into the bst
+void insert(bst tree, int key, int value);
+
+// deletes the element key from list
+void delete(bst tree, int key);
+
+// returns the value at the key
+int search(bst tree, int key);
+
+int main() {
+  
+
+}
+
+void insert(bst tree, int key, int value) {
+  
+  if (tree == NULL) {
+    // make a new node
+    node* first = malloc (sizeof(node));
+    if (first == NULL) {
+      printf("Malloc Err
+or");
+  }
+    
+
+}

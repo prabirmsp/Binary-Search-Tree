@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+
+typedef struct node {
+  int data;
+  node left;
+  node right;
+} node;
+
+
+
+
+int main() {
+  
+
+}

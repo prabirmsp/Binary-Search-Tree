@@ -56,6 +56,12 @@ int main() {
   tree = delete(tree, 3);
   print_tree(tree);
 
+  for (int i = 0; i < 10000; i++) {
+    tree = insert(tree, rand() % 10000, 0);
+  }
+
+  print_tree(tree);
+
   return 0;
 }
 
@@ -79,58 +85,60 @@ node *new_node(int key, int value) {
 
 
 
-node *insert(node * node, int key, int value) {
+node *insert(node * cur, int key, int value) {
 
-  if (node == NULL) // base case
+  if (cur == NULL) // base case
     return new_node(key, value);
 
-  if (key == node->key) // update value if there is already a value with the same key
-    node->value = value;
-  else if (key < node->key)
-    node->left = insert(node->left, key, value);
+  if (key == cur->key) // update value if there is already a value with the same key
+    cur->value = value;
+  else if (key < cur->key)
+    cur->left = insert(cur->left, key, value);
   else 
-    node->right = insert(node->right, key, value);
-  return node;
+    cur->right = insert(cur->right, key, value);
+  return cur;
 }
 
 
-node *next_inorder(node *node) {
-  if (node->left == NULL)
-    return node;
-  return next_inorder(node->left);
+node *next_inorder(node *cur) {
+  if (cur->left == NULL)
+    return cur;
+  return next_inorder(cur->left);
 }
 
 
-node *delete(node *node, int key) {
-  if (node == NULL)
-    return node;
-  if (key < node->key)
-    node->left = delete(node->left, key);
-  else if (key > node->key)
-    node->right = delete(node->right, key);
+node *delete(node *cur, int key) {
+  if (cur == NULL)
+    return cur;
+  if (key < cur->key)
+    cur->left = delete(cur->left, key);
+  else if (key > cur->key)
+    cur->right = delete(cur->right, key);
   else {
-    if (node->left == NULL && node->right == NULL) {      // has no children
-      free(node);
-      node == NULL;
+    if (cur->left == NULL && cur->right == NULL) {      // has no children
+      free(cur);
+      cur = NULL;
     }
-    else if (node->left == NULL && node->right != NULL) { // has right child only
-      node *old_node = node;
-      node = node->right;
+    else if (cur->left == NULL && cur->right != NULL) { // has right child only
+      node * old_node = cur;
+      cur = cur->right;
       free(old_node);
+      cur = NULL;
     }
-    else if (node->left != NULL && node->right == NULL) { // has left child only
-      node *old_node = node;
-      node = node->left;
+    else if (cur->left != NULL && cur->right == NULL) { // has left child only
+      node * old_node = cur;
+      cur = cur->left;
       free(old_node);
+      cur = NULL;
     }
     else {                                              // has left and right children
-      node *next = next_inorder(node->right);
-      node->key = next->key;
-      node->value = next->value;
-      node->right = delete(node->right, next->key);
+      node *next = next_inorder(cur->right);
+      cur->key = next->key;
+      cur->value = next->value;
+      cur->right = delete(cur->right, next->key);
     }
   }
-  return node;
+  return cur;
 }
 
 

@@ -28,7 +28,7 @@ node * insert(node * tree, int key, int value);
 // delete
 node *delete(node * tree, int key);
 
-// search
+// search - returns the value at the key, or -1 if key is not found
 int search(node * tree, int key);
 
 // print in order
@@ -45,10 +45,16 @@ int main() {
   tree = insert(tree, 8, 0);
   tree = insert(tree, 2, 0);
   tree = insert(tree, 7, 0);
-  tree = insert(tree, 9, 0);
+  tree = insert(tree, 9, 13);
   tree = insert(tree, 1, 0);
   tree = insert(tree, 3, 0);
   print_tree(tree);
+
+  int val = search(tree, 9);
+  printf("search 9: %d\n", val);
+
+  val = search(tree, 99);
+  printf("search 99: %d\n", val);
 
   tree = delete(tree, 5);
   print_tree(tree);
@@ -141,6 +147,17 @@ node *delete(node *cur, int key) {
   return cur;
 }
 
+
+int search(node *cur, int key) {
+  if (cur == NULL) 
+    return -1;
+  else if (key < cur->key)
+    return search(cur->left, key);
+  else if(key > cur->key)
+    return search(cur->right, key);
+  else 
+    return cur->value;
+}
 
 void print_tree(node * tree) {
   printf("Printing tree... ");

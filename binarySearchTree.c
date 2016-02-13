@@ -1,95 +1,146 @@
+ /***************************************************
+  * Binary Search Tree Dictionary
+  *
+  * Prabir Pradhan
+  * CSC-301, Ursula Wolz
+  * 
+  *
+  *
+  *****************************************************/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
 
-typedef struct Node {
+typedef struct node {
   int key;
   int value;
-  struct Node *left;
-  struct Node *right;
-} Node;
+  struct node *left;
+  struct node *right;
+} node;
 
 
 
-// insert
-void insert(Node ** tree, int key, int value);
+// insert - returns the pointer to the tree with the key-value pair inserted 
+node * insert(node * tree, int key, int value);
 
 // delete
-void delete(Node * tree, int key);
+node *delete(node * tree, int key);
 
 // search
-int search(Node * tree, int key);
+int search(node * tree, int key);
 
 // print in order
-void print_tree(Node * tree);
+void print_tree(node * tree);
 
-void print_helper(Node * cur);
+void print_helper(node * cur);
 
 int main() {
 
-  Node * tree = NULL;
+  node * tree = NULL;
 
-  insert(&tree, 5, 0);
-  insert(&tree, 4, 0);
-  insert(&tree, 8, 0);
-  insert(&tree, 2, 0);
-  insert(&tree, 5, 0);
-  insert(&tree, 7, 0);
-  insert(&tree, 9, 0);
-  insert(&tree, 1, 0);
-  insert(&tree, 3, 0);
-  
+  tree = insert(tree, 5, 0);
+  tree = insert(tree, 4, 0);
+  tree = insert(tree, 8, 0);
+  tree = insert(tree, 2, 0);
+  tree = insert(tree, 7, 0);
+  tree = insert(tree, 9, 0);
+  tree = insert(tree, 1, 0);
+  tree = insert(tree, 3, 0);
   print_tree(tree);
 
+  tree = delete(tree, 5);
+  print_tree(tree);
+
+  tree = delete(tree, 3);
+  print_tree(tree);
+
+  return 0;
 }
 
 
-void insert(Node ** tree, int key, int value) {
-  printf("inserting... %d\n", key);
-  Node *cur = *tree;
-
-  while (cur != NULL) {
-
-    if (cur->key == key) {
-      // update the value
-      cur->value = value;
-      return;
-    } else if (cur->key < key) { 
-      printf("%d", cur->key);
-      // go to left subtree
-      cur = cur->left;
-    } else {
-      printf("%d", cur->key);
-      // go to the right subtree
-      cur = cur->right;
-    }
-  }  
-
+node *new_node(int key, int value) {
   // create new node
-  Node * new_node = malloc(sizeof(Node));
+  node * new_node = malloc(sizeof(node));
   // check allocated memory
   if (new_node == NULL) {
     printf("Malloc Error\n");
-    return;
+    return NULL;
   }
-  
   // add the key/values
   new_node->key = key;
   new_node->value = value;
   new_node->left = NULL;
   new_node->right = NULL;
 
-  cur = new_node;
+  return new_node;
 }
 
 
-void print_tree(Node * tree) {
+
+node *insert(node * node, int key, int value) {
+
+  if (node == NULL) // base case
+    return new_node(key, value);
+
+  if (key == node->key) // update value if there is already a value with the same key
+    node->value = value;
+  else if (key < node->key)
+    node->left = insert(node->left, key, value);
+  else 
+    node->right = insert(node->right, key, value);
+  return node;
+}
+
+
+node *next_inorder(node *node) {
+  if (node->left == NULL)
+    return node;
+  return next_inorder(node->left);
+}
+
+
+node *delete(node *node, int key) {
+  if (node == NULL)
+    return node;
+  if (key < node->key)
+    node->left = delete(node->left, key);
+  else if (key > node->key)
+    node->right = delete(node->right, key);
+  else {
+    if (node->left == NULL && node->right == NULL) {      // has no children
+      free(node);
+      node == NULL;
+    }
+    else if (node->left == NULL && node->right != NULL) { // has right child only
+      node *old_node = node;
+      node = node->right;
+      free(old_node);
+    }
+    else if (node->left != NULL && node->right == NULL) { // has left child only
+      node *old_node = node;
+      node = node->left;
+      free(old_node);
+    }
+    else {                                              // has left and right children
+      node *next = next_inorder(node->right);
+      node->key = next->key;
+      node->value = next->value;
+      node->right = delete(node->right, next->key);
+    }
+  }
+  return node;
+}
+
+
+void print_tree(node * tree) {
   printf("Printing tree... ");
   print_helper(tree);
   printf("\n");
 }
 
-void print_helper(Node *cur) {
+void print_helper(node *cur) {
   if (cur == NULL)
     return;
   print_helper(cur->left);

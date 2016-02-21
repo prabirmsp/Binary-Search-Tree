@@ -45,10 +45,14 @@ node * find_max_value(node * tree);
 void print_helper(node * cur);
 void find_max_helper(node * cur, node ** max);
 
-int main() {
+int main(int argc, char **argv) {
 
-  printf("HEllo.");
-  char * filename = "words.txt";
+  if (argc != 2) {
+    printf("Wrong arguments. \n");
+    return 0;
+  }
+
+  char * filename = argv[1];
   printf(filename);
 
   FILE * input = fopen(filename, "r");
@@ -75,6 +79,8 @@ int main() {
   
   node * max = find_max_value(tree);
   printf("Max: (%s, %d)\n", max->key, max->value);
+
+  print_tree(tree);
 
   return 0;
 }

@@ -11,7 +11,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+#define BUFFER_SIZE 64
 
 typedef struct node {
   char * key;
@@ -36,13 +38,43 @@ int search(node * tree, char * key);
 void print_tree(node * tree);
 
 // find the word with the highest occurance (value)
-void find_max_value(node * tree, node * max);
+node * find_max_value(node * tree);
 
+
+// helpers
 void print_helper(node * cur);
+void find_max_helper(node * cur, node ** max);
 
 int main() {
 
+  printf("HEllo.");
+  char * filename = "words.txt";
+  printf(filename);
 
+  FILE * input = fopen(filename, "r");
+
+  char buffer [BUFFER_SIZE];
+
+  node * tree = NULL;
+
+  
+  while(fscanf(input, "%s", buffer) != EOF) {
+
+    char * word = malloc((strlen(buffer) + 1) * sizeof(char));
+    if (word == NULL) {
+      printf("Memory Error.\n");
+      return 1;
+    }
+  
+    strcpy(word, buffer);
+    tree = add_word(tree, word);
+  }
+
+
+  printf("Tree created.\n");
+  
+  node * max = find_max_value(tree);
+  printf("Max: (%s, %d)\n", max->key, max->value);
 
   return 0;
 }
@@ -69,14 +101,14 @@ node *new_node(char * key, int value) {
 node *add_word(node * cur, char * key){
 
   if (cur == NULL) // base case
-    return new_node(key, value);
+    return new_node(key, 1);
 
   if (strcmp(key, cur->key) == 0) // increment value if word found in tree
     (cur->value)++;
   else if (strcmp(key, cur->key) < 0)
-    cur->left = add_word(cur->left, key, value);
+    cur->left = add_word(cur->left, key);
   else 
-    cur->right = add_word(cur->right, key, value);
+    cur->right = add_word(cur->right, key);
   return cur;
 }
 
@@ -108,7 +140,7 @@ node *delete(node *cur, char * key) {
     return cur;
   if (strcmp(key, cur->key) < 0)
     cur->left = delete(cur->left, key);
-  else if ((strcmp(key, cur->key) > 0)
+  else if (strcmp(key, cur->key) > 0)
     cur->right = delete(cur->right, key);
   else {
     if (cur->left == NULL && cur->right == NULL) {      // has no children
@@ -151,7 +183,18 @@ int search(node *cur, char * key) {
 
 
 node * find_max_value(node * tree) {
+  node * max = tree;
+  find_max_helper(tree, &max);
+  return max;
+}
 
+void find_max_helper(node * cur, node ** max) {
+  if (cur == NULL)
+    return;
+  find_max_helper(cur->left, max);
+  if (cur->value > (*max)->value)
+    *max = cur;
+  find_max_helper(cur->right, max);
 }
 
 
@@ -166,6 +209,6 @@ void print_helper(node *cur) {
   if (cur == NULL)
     return;
   print_helper(cur->left);
-  printf("%s ", cur->key);
+  printf("(%s, %d) ", cur->key, cur->value);
   print_helper(cur->right);
 }

@@ -14,65 +14,41 @@
 
 
 typedef struct node {
-  int key;
+  char * key;
   int value;
   struct node *left;
   struct node *right;
 } node;
 
-
+// add_word - adds the word to the tree (increment value by 1)
+node * add_word(node * tree, char * key);
 
 // insert - returns the pointer to the tree with the key-value pair inserted 
-node * insert(node * tree, int key, int value);
+node * insert(node * tree, char * key, int value);
 
 // delete
-node *delete(node * tree, int key);
+node * delete(node * tree, char * key);
 
 // search - returns the value at the key, or -1 if key is not found
-int search(node * tree, int key);
+int search(node * tree, char * key);
 
 // print in order
 void print_tree(node * tree);
+
+// find the word with the highest occurance (value)
+void find_max_value(node * tree, node * max);
 
 void print_helper(node * cur);
 
 int main() {
 
-  node * tree = NULL;
 
-  tree = insert(tree, 5, 0);
-  tree = insert(tree, 4, 0);
-  tree = insert(tree, 8, 0);
-  tree = insert(tree, 2, 0);
-  tree = insert(tree, 7, 0);
-  tree = insert(tree, 9, 13);
-  tree = insert(tree, 1, 0);
-  tree = insert(tree, 3, 0);
-  print_tree(tree);
-
-  int val = search(tree, 9);
-  printf("search 9: %d\n", val);
-
-  val = search(tree, 99);
-  printf("search 99: %d\n", val);
-
-  tree = delete(tree, 5);
-  print_tree(tree);
-
-  tree = delete(tree, 3);
-  print_tree(tree);
-
-  for (int i = 0; i < 10000; i++) {
-    tree = insert(tree, rand() % 10000, 0);
-  }
-
-  print_tree(tree);
 
   return 0;
 }
 
 
-node *new_node(int key, int value) {
+node *new_node(char * key, int value) {
   // create new node
   node * new_node = malloc(sizeof(node));
   // check allocated memory
@@ -90,15 +66,29 @@ node *new_node(int key, int value) {
 }
 
 
-
-node *insert(node * cur, int key, int value) {
+node *add_word(node * cur, char * key){
 
   if (cur == NULL) // base case
     return new_node(key, value);
 
-  if (key == cur->key) // update value if there is already a value with the same key
+  if (strcmp(key, cur->key) == 0) // increment value if word found in tree
+    (cur->value)++;
+  else if (strcmp(key, cur->key) < 0)
+    cur->left = add_word(cur->left, key, value);
+  else 
+    cur->right = add_word(cur->right, key, value);
+  return cur;
+}
+
+
+node *insert(node * cur, char * key, int value) {
+
+  if (cur == NULL) // base case
+    return new_node(key, value);
+
+  if (strcmp(key, cur->key) == 0) // update value if there is already a value with the same key
     cur->value = value;
-  else if (key < cur->key)
+  else if (strcmp(key, cur->key) < 0)
     cur->left = insert(cur->left, key, value);
   else 
     cur->right = insert(cur->right, key, value);
@@ -113,12 +103,12 @@ node *next_inorder(node *cur) {
 }
 
 
-node *delete(node *cur, int key) {
+node *delete(node *cur, char * key) {
   if (cur == NULL)
     return cur;
-  if (key < cur->key)
+  if (strcmp(key, cur->key) < 0)
     cur->left = delete(cur->left, key);
-  else if (key > cur->key)
+  else if ((strcmp(key, cur->key) > 0)
     cur->right = delete(cur->right, key);
   else {
     if (cur->left == NULL && cur->right == NULL) {      // has no children
@@ -148,16 +138,23 @@ node *delete(node *cur, int key) {
 }
 
 
-int search(node *cur, int key) {
+int search(node *cur, char * key) {
   if (cur == NULL) 
     return -1;
-  else if (key < cur->key)
+  else if (strcmp(key, cur->key) < 0)
     return search(cur->left, key);
-  else if(key > cur->key)
+  else if (strcmp(key, cur->key) > 0)
     return search(cur->right, key);
   else 
     return cur->value;
 }
+
+
+node * find_max_value(node * tree) {
+
+}
+
+
 
 void print_tree(node * tree) {
   printf("Printing tree... ");
@@ -169,6 +166,6 @@ void print_helper(node *cur) {
   if (cur == NULL)
     return;
   print_helper(cur->left);
-  printf("%d ", cur->key);
+  printf("%s ", cur->key);
   print_helper(cur->right);
 }

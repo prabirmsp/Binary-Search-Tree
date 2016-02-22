@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/time.h>
 
 #define BUFFER_SIZE 64
 
@@ -45,8 +46,10 @@ node * find_max_value(node * tree);
 // helpers
 void print_helper(node * cur);
 void find_max_helper(node * cur, node ** max);
+void time_print(struct timeval start, struct timeval end);
 
 int main(int argc, char **argv) {
+  struct timeval start, end;
 
   if (argc != 2) {
     printf("Wrong arguments. (Eample: program textfile.txt\n");
@@ -61,10 +64,12 @@ int main(int argc, char **argv) {
 
   node * tree = NULL;
 
-  clock_t begin, end;
+  clock_t begin, endd;
   double time_spent;
 
   begin = clock();
+  gettimeofday(&start, NULL);
+
   while(fscanf(input, "%s", buffer) != EOF) {
 
     char * word = malloc((strlen(buffer) + 1) * sizeof(char));
@@ -76,22 +81,34 @@ int main(int argc, char **argv) {
     strcpy(word, buffer);
     tree = add_word(tree, word);
   }
-  end = clock();
-  time_spent = ((double) (end - begin)) / CLOCKS_PER_SEC;
-  time_spent *= 1000000000;
-  printf("Tree created. Time taken: %.16f * 10^(-9) secs.\n", time_spent);
+  endd = clock();
+  gettimeofday(&end, NULL);
+  time_spent = ((double) (endd - begin)) / CLOCKS_PER_SEC;
+  time_spent *= 1000000;
+  printf("Tree created. Time taken: %f * 10^(-6) secs.\n", time_spent);
+  time_print(start, end);
   
   begin = clock();
+  gettimeofday(&start, NULL);
   node * max = find_max_value(tree);
-  end = clock();
-  time_spent = ((double) (end - begin)) / CLOCKS_PER_SEC;
-  time_spent *= 1000000000;
-  printf("Max: (%s, %d). Time taken: %.16f * 10^(-9) secs\n", 
+  gettimeofday(&end, NULL);
+  endd = clock();
+  time_spent = ((double) (endd - begin)) / CLOCKS_PER_SEC;
+  time_spent *= 1000000;
+  printf("Max: (%s, %d). Time taken: %f * 10^(-6) secs\n", 
          max->key, max->value, time_spent);
+  time_print(start, end);
 
   //print_tree(tree);
 
   return 0;
+}
+
+void time_print(struct timeval start, struct timeval end) {
+  int u_sec = ((end.tv_sec - start.tv_sec)*1000000L
+           +end.tv_usec) - start.tv_usec;
+  printf("Time in microseconds: %d microseconds ", u_sec);
+  printf("(%f ms)\n\n", u_sec/1000.0);
 }
 
 

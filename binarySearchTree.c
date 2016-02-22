@@ -48,7 +48,7 @@ void find_max_helper(node * cur, node ** max);
 int main(int argc, char **argv) {
 
   if (argc != 2) {
-    printf("Wrong arguments. \n");
+    printf("Wrong arguments. (Eample: program textfile.txt\n");
     return 0;
   }
 
@@ -61,7 +61,10 @@ int main(int argc, char **argv) {
 
   node * tree = NULL;
 
-  
+  clock_t begin, end;
+  double time_spent;
+
+  begin = clock();
   while(fscanf(input, "%s", buffer) != EOF) {
 
     char * word = malloc((strlen(buffer) + 1) * sizeof(char));
@@ -73,12 +76,17 @@ int main(int argc, char **argv) {
     strcpy(word, buffer);
     tree = add_word(tree, word);
   }
-
-
-  printf("Tree created.\n");
+  end = clock();
+  time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
   
+  printf("Tree created. Time taken: %lf secs.\n", time_spent);
+  
+  begin = clock();
   node * max = find_max_value(tree);
-  printf("Max: (%s, %d)\n", max->key, max->value);
+  end = clock();
+  time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+  printf("Max: (%s, %d). Time taken: %lf secs\n", 
+         max->key, max->value, time_spent);
 
   print_tree(tree);
 

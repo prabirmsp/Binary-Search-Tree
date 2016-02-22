@@ -67,6 +67,8 @@ int main(int argc, char **argv) {
   clock_t begin, endd;
   double time_spent;
 
+
+  // insert all 
   begin = clock();
   gettimeofday(&start, NULL);
 
@@ -87,7 +89,22 @@ int main(int argc, char **argv) {
   time_spent *= 1000000;
   printf("Tree created. Time taken: %f * 10^(-6) secs.\n", time_spent);
   time_print(start, end);
-  
+
+  // insert one
+  gettimeofday(&start, NULL);
+  tree = add_word(tree, "hello");
+  gettimeofday(&end, NULL);
+  printf("Inserted 'hello'.\n");
+  time_print(start, end);
+
+  // search
+  gettimeofday(&start, NULL);
+  search(tree, "the");
+  gettimeofday(&end, NULL);
+  printf("Search for 'the'.\n");
+  time_print(start, end);
+
+  // max
   begin = clock();
   gettimeofday(&start, NULL);
   node * max = find_max_value(tree);

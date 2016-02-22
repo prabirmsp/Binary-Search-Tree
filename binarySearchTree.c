@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define BUFFER_SIZE 64
 
@@ -53,8 +54,7 @@ int main(int argc, char **argv) {
   }
 
   char * filename = argv[1];
-  printf(filename);
-
+ 
   FILE * input = fopen(filename, "r");
 
   char buffer [BUFFER_SIZE];
@@ -77,18 +77,19 @@ int main(int argc, char **argv) {
     tree = add_word(tree, word);
   }
   end = clock();
-  time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
-  
-  printf("Tree created. Time taken: %lf secs.\n", time_spent);
+  time_spent = ((double) (end - begin)) / CLOCKS_PER_SEC;
+  time_spent *= 1000000000;
+  printf("Tree created. Time taken: %.16f * 10^(-9) secs.\n", time_spent);
   
   begin = clock();
   node * max = find_max_value(tree);
   end = clock();
-  time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
-  printf("Max: (%s, %d). Time taken: %lf secs\n", 
+  time_spent = ((double) (end - begin)) / CLOCKS_PER_SEC;
+  time_spent *= 1000000000;
+  printf("Max: (%s, %d). Time taken: %.16f * 10^(-9) secs\n", 
          max->key, max->value, time_spent);
 
-  print_tree(tree);
+  //print_tree(tree);
 
   return 0;
 }

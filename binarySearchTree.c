@@ -51,8 +51,8 @@ void time_print(struct timeval start, struct timeval end);
 int main(int argc, char **argv) {
   struct timeval start, end;
 
-  if (argc != 2) {
-    printf("Wrong arguments. (Eample: program textfile.txt\n");
+  if (argc != 6) {
+    printf("Wrong arguments.\nUsage: program textfile.txt get_word insert_word delete_word\n");
     return 0;
   }
 

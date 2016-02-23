@@ -92,16 +92,24 @@ int main(int argc, char **argv) {
 
   // insert one
   gettimeofday(&start, NULL);
-  tree = add_word(tree, "hello");
+  tree = add_word(tree, argv[3]);
   gettimeofday(&end, NULL);
-  printf("Inserted 'hello'.\n");
+  printf("Insert: %s\n", argv[3]);
   time_print(start, end);
 
   // search
   gettimeofday(&start, NULL);
-  search(tree, "the");
+  search(tree, argv[2]);
   gettimeofday(&end, NULL);
-  printf("Search for 'the'.\n");
+  printf("Search for: %s\n", argv[2]);
+  time_print(start, end);
+
+  // delete
+
+  gettimeofday(&start, NULL);
+  tree = delete(tree, argv[4]);
+  gettimeofday(&end, NULL);
+  printf("Delete word: %s\n", argv[4]);
   time_print(start, end);
 
   // max

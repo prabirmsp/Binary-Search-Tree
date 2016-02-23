@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 #include <sys/time.h>
 
 #define BUFFER_SIZE 64
@@ -48,10 +49,16 @@ void print_helper(node * cur);
 void find_max_helper(node * cur, node ** max);
 void time_print(struct timeval start, struct timeval end);
 
+void tolowercase(char * s) {
+  for (int i = 0; i < strlen(s); i++) {
+    s[i] = tolower(s[i]);
+  }
+}
+
 int main(int argc, char **argv) {
   struct timeval start, end;
 
-  if (argc != 6) {
+  if (argc != 5) {
     printf("Wrong arguments.\nUsage: program textfile.txt get_word insert_word delete_word\n");
     return 0;
   }
@@ -81,6 +88,7 @@ int main(int argc, char **argv) {
     }
   
     strcpy(word, buffer);
+    tolowercase(word);
     tree = add_word(tree, word);
   }
   endd = clock();
@@ -90,18 +98,18 @@ int main(int argc, char **argv) {
   printf("Tree created. Time taken: %f * 10^(-6) secs.\n", time_spent);
   time_print(start, end);
 
+  // search
+  gettimeofday(&start, NULL);
+  int s = search(tree, argv[2]);
+  gettimeofday(&end, NULL);
+  printf("Search for: (%s, %d)\n", argv[2], s);
+  time_print(start, end);
+
   // insert one
   gettimeofday(&start, NULL);
   tree = add_word(tree, argv[3]);
   gettimeofday(&end, NULL);
   printf("Insert: %s\n", argv[3]);
-  time_print(start, end);
-
-  // search
-  gettimeofday(&start, NULL);
-  search(tree, argv[2]);
-  gettimeofday(&end, NULL);
-  printf("Search for: %s\n", argv[2]);
   time_print(start, end);
 
   // delete
